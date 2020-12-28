@@ -24,98 +24,12 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
     app.use(formidableMiddleware())
 
     app.use(session({
-        secret: SECRETKEY,
         resave: true,
         saveUninitialized: true,
-        genid: req => uuid() //eslint-disable-line
+        secret: SECRETKEY,
+        genid: req => uuid() 
     }))
 
-    app.get("/api/restaurant/name/:name", (req, res) => {
-        var criteria = {}
-        criteria['name'] = req.params.name;
-
-        findRestaurant(db, criteria, (restaurant) => {
-            res.status(200).json(restaurant)
-        })
-    })
-
-    app.get("/api/restaurant/borough/:borough", (req, res) => {
-        var criteria = {}
-        criteria['borough'] = req.params.borough;
-
-        findRestaurant(db, criteria, (restaurant) => {
-            res.status(200).json(restaurant)
-        })
-    })
-
-
-    app.get("/api/restaurant/cuisine/:cuisine", (req, res) => {
-        var criteria = {}
-        criteria['cuisine'] = req.params.cuisine;
-
-        findRestaurant(db, criteria, (restaurant) => {
-            res.status(200).json(restaurant)
-        })
-    })
-
-
-    app.get("/api/restaurant/", (req, res) => {
-        findRestaurant(db, {}, (restaurant) => {
-            res.status(200).json(restaurant)
-        })
-    })
-
-    app.post("/api/restaurant/", async (req, res) => {
-
-        var name = req.fields.name;
-        var borough = req.fields.borough;
-        var cuisine = req.fields.cuisine;
-        var street = req.fields.street;
-        var building = req.fields.building;
-        var zipcode = req.fields.zipcode;
-        var axisx = req.fields.axisx;
-        var axisy = req.fields.axisy;
-        var user = req.fields.field;
-        if (name == null) {
-            res.status(200).json({status: "failed"})
-            return
-        }
-
-        const uploadPhoto = req.files.photo
-        //const owner = req.session.userid
-
-        let photo
-        if (uploadPhoto != null) {
-            const filename = uploadPhoto.path
-            const mimetype = uploadPhoto.type
-
-            if (uploadPhoto.size !== 0 && (mimetype === "image/jpeg" || mimetype === "image/png")) {
-                await new Promise((resolve, reject) => {
-                    fs.readFile(filename, (err, data) => {
-                        if (err) {
-                            reject(err)
-                        } else {
-                            resolve(
-                                photo = {
-                                    mimetype,
-                                    image: new Buffer(data).toString("base64")
-                                }
-                            )
-                        }
-                    })
-                })
-            }
-        }
-
-        insertRestaurant(db, name, borough, photo, street, building, zipcode, axisx, axisy, owner, function (err, insertOneWriteOpResult) {
-            assert.equal(err, null)
-            if (!insertOneWriteOpResult) {
-                res.status(200).json({status: "failed"})
-            }
-            res.status(200).json({status: "ok", _id: insertOneWriteOpResult.insertedId})
-        })
-
-    })
 
     app.get("/login", (req, res) => {
         if (!req.session.authenticated) {
@@ -126,7 +40,7 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
     })
 
     app.post("/login", (req, res) => {
-        for (let i = 0; i < users.length; i++) {
+        for (var i = 0; i < users.length; i++) {
             if (users[i].userid === req.fields.userid &&
                 users[i].password === req.fields.password) {
                 req.session.authenticated = true
@@ -136,7 +50,7 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
         res.redirect("/list")
     })
 
-    app.use((req, res, next) => { //next()
+    app.use((req, res, next) => { 
         console.log("Running login")
         if (req.session.authenticated) {
             next()
@@ -152,14 +66,14 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
     })
 
     app.get("/list", (req, res) => {
-        const query = req.query
+        var query = req.query
         findRestaurant(db, {}, (restaurant) => {
             res.render("list", {restaurant, self: req.session.userid, query})
         })
     })
 
     app.get("/display", (req, res) => {
-        const criteria = {_id: ObjectID(req.query._id)}
+        var criteria = {_id: ObjectID(req.query._id)}
         findRestaurant(db, criteria, (record) => {
             if (record[0] != undefined) {
                 res.render("display", {record: record[0]})
@@ -185,12 +99,13 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
         var axisy = req.fields.axisy;
         var uploadPhoto = req.files.photo;
         var owner = req.session.userid;
+        var filename = uploadPhoto.path;
+        var mimetype = uploadPhoto.type;
+        var photo;
         assert.notEqual(owner, null)
         assert.notEqual(name, null)
 
-        var photo
-        var filename = uploadPhoto.path;
-        var mimetype = uploadPhoto.type;
+        
 
         if (uploadPhoto.size !== 0 && (mimetype === "image/jpeg" || mimetype === "image/png")) {
             await new Promise((resolve, reject) => {
@@ -265,9 +180,9 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
         return
     })
 
-    app.get("/change", (req, res) => {
-        const self = req.session.userid
-        const criteria = {_id: ObjectID(req.query._id), owner: self}
+    app.get("/change", (req, res) => {  
+        var self = req.session.userid;
+        var criteria = {_id: ObjectID(req.query._id), owner: self};
         findRestaurant(db, criteria, (record) => {
             if (record[0] !== undefined) {
                 res.render("change", {record: record[0], error: null})
@@ -290,17 +205,18 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
         var _id = req.fields._id;
         var uploadPhoto = req.files.photo;
         var self = req.session.userid;
-
+        var filename = uploadPhoto.path;
+        var mimetype = uploadPhoto.type;
+        var photo;
         if (name == null) {
             res.render("error", {message: "name should not be empty"})
             return
         }
 
-        var updateObj = {name, borough, cuisine, address: {street, building, zipcode, coord: {axisx, axisy}}}
+        var newRecord = {name, borough, cuisine, address: {street, building, zipcode, coord: {axisx, axisy}}}
 
-        let photo
-        const filename = uploadPhoto.path
-        const mimetype = uploadPhoto.type
+        
+
 
         if (uploadPhoto.size !== 0 && (mimetype === "image/jpeg" || mimetype === "image/png")) {
             await new Promise((resolve, reject) => {
@@ -317,9 +233,9 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
                     }
                 })
             })
-            updateObj.photo = photo
+            newRecord.photo = photo
         }
-        updateRestaurant(db, _id, self, updateObj, function (result) {
+        updateRestaurant(db, _id, self, newRecord, function (result) {
             assert.equal(err, null)
             if (!result) {
                 res.render("change", {error: "some error occurs", record: {name: "some error occurs"}})
@@ -328,6 +244,86 @@ MongoClient.connect(MongoURL, {useNewUrlParser: true, useUnifiedTopology: true},
             }
         })
 
+    })
+
+
+
+    app.get("/api/restaurant/", (req, res) => {
+        findRestaurant(db, {}, (restaurant) => {
+            res.status(200).json(restaurant)
+        })
+    })
+
+    app.post("/api/restaurant/", async (req, res) => {
+
+        var name = req.fields.name;
+        var borough = req.fields.borough;
+        var cuisine = req.fields.cuisine;
+        var street = req.fields.street;
+        var building = req.fields.building;
+        var zipcode = req.fields.zipcode;
+        var axisx = req.fields.axisx;
+        var axisy = req.fields.axisy;
+        var user = req.fields.field;
+        var filename = uploadPhoto.path;
+        var mimetype = uploadPhoto.type;
+        var photo;
+        var uploadPhoto = req.files.photo
+        if (name == null) {
+            res.status(200).json({status: "failed"})
+            return
+        }
+    
+        if (uploadPhoto != null) {
+ 
+            if (uploadPhoto.size !== 0 && (mimetype === "image/jpeg" || mimetype === "image/png")) {
+                await new Promise((resolve, reject) => {
+                    fs.readFile(filename, (err, data) => {
+                        if (err) { reject(err)} else {
+                            resolve(
+                                photo = {mimetype,image: new Buffer(data).toString("base64")
+                                }
+                            )
+                        }
+                    })
+                })
+            }
+        }
+
+        insertRestaurant(db, name, borough, photo, street, building, zipcode, axisx, axisy, owner, function (err, insertOneWriteOpResult) {
+            assert.equal(err, null)
+            if (!insertOneWriteOpResult) {
+                res.status(200).json({status: "failed"})
+            }
+            res.status(200).json({status: "ok", _id: insertOneWriteOpResult.insertedId})
+        })
+
+    })
+
+
+    app.get("/api/restaurant/name/:name", (req, res) => {
+        var criteria = {}
+        criteria['name'] = req.params.name;
+        findRestaurant(db, criteria, (restaurant) => {
+            res.status(200).json(restaurant)
+        })
+    })
+
+    app.get("/api/restaurant/borough/:borough", (req, res) => {
+        var criteria = {}
+        criteria['borough'] = req.params.borough;
+        findRestaurant(db, criteria, (restaurant) => {
+            res.status(200).json(restaurant)
+        })
+    })
+
+
+    app.get("/api/restaurant/cuisine/:cuisine", (req, res) => {
+        var criteria = {}
+        criteria['cuisine'] = req.params.cuisine;
+        findRestaurant(db, criteria, (restaurant) => {
+            res.status(200).json(restaurant)
+        })
     })
 
     app.get("/googlemap", (req, res) => {
@@ -356,7 +352,7 @@ function findRestaurant(db, criteria, callback) {
     rest.each(function (err, doc) {
         assert.equal(err, null)
         if (doc != null) {
-            rests.push(doc)
+            rests.push(doc);
         } else {
             callback(rests);
         }
@@ -367,9 +363,7 @@ function deleteRestaurant(db, criteria, callback) {
 
     db.collection(RESTAURANT).deleteMany(criteria, function (err, result) {
             assert.equal(err, null)
-            console.log("remove successful!");
-            console.log(JSON.stringify(result));
-            callback(result)
+            callback(result);
         }
     )
 }
@@ -386,8 +380,8 @@ function rateRestaurant(db, _id, score, userid, callback) {
     callback(result);
 }
 
-function updateRestaurant(db, _id, self, updateObj, callback) {
-    var result = db.collection(RESTAURANT).updateOne({_id: ObjectID(_id), owner: self}, {$set: updateObj})
+function updateRestaurant(db, _id, self, newRecord, callback) {
+    var result = db.collection(RESTAURANT).updateOne({_id: ObjectID(_id), owner: self}, {$set: newRecord})
     callback(result);
 }
 
@@ -402,4 +396,5 @@ function insertRestaurant(db, name, borough, cuisine, photo, street, building, z
     })
     callback(result);
 }
+
 
