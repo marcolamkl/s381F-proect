@@ -1,0 +1,106 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>List</title>
+
+
+  <body>
+    
+      <div class="navbar-brand">
+        <h1 class="title is-1">List Restaurant</h1>
+      </div>
+      
+    
+
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <div class="heading">
+            <h3 class="title is-3">User: <b><%=self%></b></h3>     
+          </div>
+          <div class="buttons">
+            <a class="button is-light" href="/logout" style="color: black">Logout</a>
+          </div>
+          <p>
+          
+            <div class="subtitle">
+              <div class="columns" id="search">
+                <div class="column is-one-fifth">
+                  <div class="section">
+                    <form method="get" action="/list">
+                      <label for="name">Restaurant Name:</label><br/>
+                      <select id="name" name="name">
+                        <option></option>
+                        <% restaurant.forEach( record => { if (record.name != "") { %>
+                        <option value="<%=record.name%>" ><%=record.name%></option>
+                        <% }}) %>
+                      </select><br/>
+
+                      <label for="borough">Borough:</label><br/>
+                      <select id="borough" name="borough">
+                        <option></option>
+                        <% restaurant.forEach( record => { if (record.borough != "") { %>
+                        <option value="<%=record.borough%>" ><%=record.borough%></option>
+                        <% }}) %>
+                      </select><br/>
+
+                      <label for="cuisine">Cuisine:</label><br/>
+                      <select id="cuisine" name="cuisine">
+                        <option></option>
+                        <% restaurant.forEach( record => { if (record.cuisine != "") { %>
+                        <option value="<%=record.cuisine%>" ><%=record.cuisine%></option>
+                        <% }}) %>
+                      </select><br/>
+                      <div class="field is-grouped">
+                        <div class="control">
+                          <button class="button is-link">Search</button>
+                        </div>
+                      </div>
+                    </form>
+                    
+                    <form method="get" action="/list">
+                      <div class="field is-grouped">
+                        <div class="control">
+                          <button class="button is-link">Clear search</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div class="column" id="rest-table">
+                  <div class="control">
+                    <a class="button is-text" href="/create" style="color: black">Create New Restaurant</a>
+                  </div>
+
+                  <div class="content">
+                    <p class="title is-3 is-spaced">Restaurant:</p>
+                    <ol>
+                      <% restaurant.forEach( record => {
+                        if ((query.name == record.name || query.name == "" || query.name == null)&&
+                            (query.borough == record.borough || query.borough == "" || query.borough == null)&&
+                            (query.cuisine == record.cuisine || query.cuisine == "" || query.cuisine == null)){
+                      %>
+                      <li>
+                        <div class="control">
+                          <a class="button is-text" href="/display?_id=<%=record._id %>"><%= record.name %></a>
+                        </div>
+                      </li>
+                      <% }}) %>
+                    </ol>
+
+                    <% if (restaurant.length == 0) { %>
+                    <p>No restaurants record</p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+
+  </body>
+</html>

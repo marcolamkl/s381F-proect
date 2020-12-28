@@ -1,0 +1,45 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+   
+    <title>Score</title>
+  </head>
+
+  <body>
+    <nav class="navbar" style="background-color:#152934">
+      <div class="navbar-brand">
+        <h1 class="title is-1" style="color: #dee1e3">Score</h1>
+      </div>
+    </nav>
+
+    <div class="section">
+      <form action='/score' method='post'>
+
+        <div class="field">
+          <label class="label">Score(1-10):</label>
+          <div class="control">
+            <input name="score" class="input" type="number" required="required" max="10" min="1"/>
+          </div>
+        </div>
+
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-link">Score</button>
+          </div>
+        </div>
+
+        <input type="hidden" name="_id" value=<%=_id%> >
+        <input type="hidden" name="userid" value=<%=userid%> >
+
+      </form>
+
+      <div class="control">
+        <button class="button is-text" type="button" onclick="goBack()"">Go Back</button>
+      </div>
+    </div>
+	<script>
+		function goBack() {window.history.back();}
+	</script>
+  </body>
+</html>

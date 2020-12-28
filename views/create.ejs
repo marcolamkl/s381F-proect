@@ -1,0 +1,99 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <title>Create new restaurant</title>
+  </head>
+
+  <body>
+    <% if (typeof error != "undefined") { %>
+      <p><%=error%><p>
+    <% } %>
+
+    <nav class="navbar" style="background-color:#152934">
+      <div class="navbar-brand">
+        <h1 class="title is-1" style="color: #dee1e3">Create New Restaurant</h1>
+      </div>
+    </nav>
+
+    <div class="section">
+      <form action='/create' method='post' enctype="multipart/form-data">
+
+        <div class="field">
+          <label class="label">Restaurant name:</label>
+          <div class="control">
+            <input name="name" class="input" type="text" required="required"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Borough:</label>
+          <div class="control">
+            <input name="borough" class="input" type="text"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Cuisine:</label>
+          <div class="control">
+            <input name="cuisine" class="input" type="text"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Photo:</label>
+          <div class="control">
+            <input type="file" name="photo"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Street:</label>
+          <div class="control">
+            <input name="street" class="input" type="text"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Building:</label>
+          <div class="control">
+            <input name="building" class="input" type="text"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">Zipcode:</label>
+          <div class="control">
+            <input name="zipcode" class="input" type="text"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">GPS Coordinates (lon.):</label>
+          <div class="control">
+            <input type="number" step="any" name="axisx"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label">GPS Coordinates (lat.)</label>
+          <div class="control">
+            <input type="number" step="any" name="axisy"/>
+          </div>
+        </div>
+
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-link">Create</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <a class="button is-text" href="/read">Back</a>
+        </div>
+
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>Show restaurant in Google Map</title>
+    <style>
+        body {
+            margin: 0
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    function initMap() {
+      var options = {
+        zoom: 16,
+        center: {lat: <%=lat%>, lng: <%=lon%>}
+      }
+      var map = new google.maps.Map(document.getElementById("map"), options)
+      var marker = new google.maps.Marker({
+        position: {lat: <%=lat%>, lng: <%=lon%>},
+        map: map
+      })
+      var infoWindow = new google.maps.InfoWindow({
+        content: "<h2><%=restaurant%></h2>"
+      })
+      marker.addListener("click", function () {
+        infoWindow.open(map, marker)
+      })
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_XBP6pjsSMW4yNttpWUEBvCEcr-ojnhI&callback=initMap" async defer></script>
+</body>
+</html>
